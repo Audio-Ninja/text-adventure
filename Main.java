@@ -1,4 +1,5 @@
 import java.util.Scanner; //Imports scanner for user input.
+import java.util.ArrayList;
 
 public class Main {
 
@@ -11,6 +12,7 @@ public class Main {
             clearScreen();
             System.out.println("Here is how you play:");
             helpScreen();
+            goFromHelp();
         } else if (response.toLowerCase().equals("no")) {
             clearScreen();
             System.out.println("Darkness.\nYour vision slowly clears, brightening until you can observe your surroundings.\nOver on your right, you see a " + 
@@ -31,8 +33,13 @@ public class Main {
     static void takeAction(int place) {
         Scanner scan = new Scanner(System.in);
         String action;
+        int endIndex = 8;
         action = scan.nextLine();
+        boolean otherAction = false;
 
+        if(action.length() < 8) {
+            endIndex = action.length();
+        }
         if(action.toLowerCase().equals("end game")) {
             System.out.println("Game ended.");
             scan.close();
@@ -40,22 +47,48 @@ public class Main {
         }
         if(action.toLowerCase().equals("help")) {
             helpScreen();
-            scan.close();
-            return;
+            otherAction = true;
         }
-        if(action.length() > 7 && action.substring(0, 8).toLowerCase().equals("talk to ")) {
-            String printText;
-            String object = action.substring(8, action.length());
-            printText = "Unfortunatly, you don't know how to talk to the " + object;
-            if(object.toLowerCase().equals("chicken")) {
-                printText = "The strange " + mark("chicken") + " turns to you and says, \"Oh! Hello there, traveler from the outer realm!\"";
+        if(action.toLowerCase().equals("lol")) {
+            if((int) (Math.random() * 2) == 1) {
+                lists.inventory.add("a stick");
+            } else {
+                lists.inventory.add("a sandwich");
             }
-            System.out.println(printText);
-            takeAction(0);
-        } else {
-            System.out.println("Invalid action. Make sure you spelled it correctly and try again.");
-            takeAction(1);
+            otherAction = true;
         }
+        if(action.toLowerCase().equals("bob")) {
+            lists.inventory.add("a block of cheese");
+            otherAction = true;
+        }
+        if(action.toLowerCase().equals("i")) {
+            if(lists.inventory.size() == 0) {
+                System.out.println("You have nothing in your inventory.");
+            } else {
+                String items = "You have ";
+                for(int i = 0; i < lists.inventory.size() - 1; i++) {
+                    items += lists.inventory.get(i) + ", ";
+                }
+                items += "and " + lists.inventory.get(lists.inventory.size() - 1) + ".";
+                System.out.println(items);    
+            }
+            otherAction = true;
+        }
+        if(otherAction == false) {
+            if(action.substring(0, endIndex).toLowerCase().equals("talk to ")) {
+                String printText;
+                String object = action.substring(8, action.length());
+                printText = "Talk to... who?";
+                if(object.toLowerCase().equals("chicken")) {
+                    printText = "The strange " + mark("chicken") + " turns to you and says, \"Oh! Hello there, traveler from the outer realm!\"";
+                }
+                System.out.println(printText);
+            } else {
+                System.out.println("Invalid action. Make sure you spelled it correctly and try again.");
+            }    
+        }
+        
+        takeAction(0);
         scan.close();
     }
 
@@ -71,6 +104,25 @@ public class Main {
         mark("bread") + " in your inventory.\nIn this situation, here are some actions you could type:\ntalk to man\nwalk to path\npush man" +
         "\ngive bread to man\nuse bread\nuse axe on stick\n\nYou can also type " + mark("quests") + " to see your current and completed quests, " +
         mark("i") + " to view your inventory, " + mark("end game") + " to end the game, and " + mark("help") + " to view this how to play section again.");
+    }
+
+    static void goFromHelp() {
+        System.out.println("\nType 'ready' when you are ready to proceed.");
+        Scanner scan = new Scanner(System.in);
+        String response = scan.nextLine();
+        if(response.toLowerCase().equals("ready")) {
+            clearScreen();
+            System.out.println("Darkness.\nYour vision slowly clears, brightening until you can observe your surroundings.\nOver on your right, you see a " + 
+            mark("chicken") + "... with four legs? What is this place?");
+            takeAction(0);
+        } else {
+            goFromHelp();
+        }
+        scan.close();
+    }
+
+    public class lists {
+        public static ArrayList<String> inventory = new ArrayList<String>();
     }
 
     public static void main(String[] args) {
