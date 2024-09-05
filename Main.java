@@ -17,6 +17,7 @@ public class Main {
             System.out.println("Darkness.\nYour vision slowly clears, brightening until you can observe your surroundings. You find yourself " + 
             "on a dirt path amidst a grassy plain. Ahead of you, the path forks away in multiple directions. \nOver on your right, you see a " + 
             mark("rooster") + "... with four legs? What is this place?");
+            addQuest("Return to your realm");
             takeAction();
         } else {
             System.out.println("Invalid response. Try again.");
@@ -95,12 +96,33 @@ public class Main {
                 String printText;
                 String object = action.substring(8, action.length());
                 printText = "Talk to... who?";
-                if(object.toLowerCase().equals("rooster")) {
+                String printQuest = null;
+                if(object.toLowerCase().equals("rooster") && player.place == "Grassy Plain") {
                     printText = "The strange " + mark("rooster") + " turns to you and cocks his head. \"Oh! Hello there, can I help you?\"\n" +
-                    "\"Where am I?\" You ask. \"How do I get back home?\"\nThe rooster's expression shifts to what you think is confusion. \"Uh... " + 
-                    "I didn't expect that question already... but the sorcerer should be able to send you back to your realm.\" He points a wing to where\n" + 
-                    "the path branches off toward some " + mark("mountains") + " to your left.\n\"He lives up there. And don't worry, I've heard he's a good fellow.\"";
+                    "\"Where am I?\" You ask. \"How do I get back home?\"\nThe rooster's expression shifts to what you think is confusion. \"Huh... well I'm not " + 
+                    "certain... but The Sorcerer is pretty strong in his magic, so he should be able to send you back to your realm.\" He\npoints a wing to where" + 
+                    "the path branches off toward a " + mark("mountain") + " to your left.\n\"He lives up there. And don't worry, I've heard he's a good fellow.\"";
+                    printQuest = "Talk to The Sorcerer";
+                }    
+                
+                System.out.println(printText);
+                if(printQuest != null) {
+                    addQuest(printQuest);
                 }
+            } else if(action.substring(0, endIndex).toLowerCase().equals("walk to ")) {
+                String printText;
+                String object = action.substring(8, action.length());
+                printText = "From where you are, you don't know how to walk to " + object;
+                if(object.toLowerCase().equals("mountain") && player.place == "Grassy Plain") {
+                    clearScreen();
+                    player.place = "The Mountain Base";
+                    printText = player.place + "\n\nYou now stand at the base of the mountain. A steep, rough " + mark("trail") + " winds its way up to the top of the " +
+                    "mountain. A short ways up in the trail, part of the mountain opens up into the entrance of a " + mark("cave") + ".";
+                }
+                if(object.toLowerCase().equals("trail") && player.place == "The Mountain Base") {
+                    printText = "You begin the trek along the trail to the top, and the way is steady but steep.";
+                }
+
                 System.out.println(printText);
             } else {
                 System.out.println("Invalid action. Make sure you spelled it correctly and try again.");
@@ -113,6 +135,11 @@ public class Main {
 
     public static String mark(String text) {
         return "\u001B[96m" + text + "\u001B[0m";
+    }
+
+    static void addQuest(String quest) {
+        player.quests.add(quest);
+        System.out.println("\nNEW QUEST: " + quest + ".");
     }
 
     static void helpScreen() {
@@ -152,6 +179,6 @@ public class Main {
         clearScreen();
         System.out.println("Welcome!");
         System.out.println("Do you need to know how to play before you start? (type 'yes' or 'no', then hit enter)");
-        gameStart();
+        gameStart(); 
     }
 }
